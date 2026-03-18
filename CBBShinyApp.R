@@ -1,3 +1,4 @@
+# Load packages
 library(shiny)
 library(dplyr)
 library(DT)
@@ -40,13 +41,17 @@ cols_to_convert_adv <- c("SRS", "SOS", "Pace", "ORtg", "FTr", "3PAr", "TS%", "TR
 cbb_adv_clean[cols_to_convert_adv] <- lapply(cbb_adv_clean[cols_to_convert_adv], as.numeric)
 
 # Add logo to cbb advanced
+Path <- "C:\\Users\\johna\\Documents\\Sports Models\\College Basketball 2026\\College Basketball Logos\\"
 ncaa <- c("NCAA")
 
+# Get NCAA Tournament Teams
 cbb_adv_clean <- cbb_adv_clean %>%
   filter(str_sub(School, -4, -1) %in% ncaa)
 
+# Get rid of NCAA at the end
 cbb_adv_clean$School <- substr(cbb_adv_clean$School, 1, nchar(cbb_adv_clean$School) - 5)
 
+# Add logo path to the dataframe
 cbb_adv_clean$logo <- paste0(Path, cbb_per_game$School, ".png")
 
 # Add rankings
@@ -81,11 +86,13 @@ cbb_adv_opp_clean <-
 cols_to_convert_adv_opp <- c("Pace", "ORtg", "FTr", "3PAr", "TS%", "TRB%", "AST%", "STL%", "BLK%", "eFG%", "TOV%", "ORB%", "FT/FGA")
 cbb_adv_opp_clean[cols_to_convert_adv_opp] <- lapply(cbb_adv_opp_clean[cols_to_convert_adv_opp], as.numeric)
 
+# Get the NCAA Tournament teams
 ncaa <- c("NCAA")
 
 cbb_adv_opp_clean <- cbb_adv_opp_clean %>%
   filter(str_sub(School, -4, -1) %in% ncaa)
 
+# Get rid of NCAA at the end
 cbb_adv_opp_clean$School <- substr(cbb_adv_opp_clean$School, 1, nchar(cbb_adv_opp_clean$School) - 5)
 
 # Rankings
@@ -126,13 +133,13 @@ cols_to_convert <- c("Rk", "G", "W", "L", "W.L.", "SRS", "SOS", "Tm.",
 cbb_clean[cols_to_convert] <- lapply(cbb_clean[cols_to_convert], as.numeric)
 
 
-# Figure out which teams average the most ppg
-cbb_clean$PPG <- round(cbb_clean$Tm./cbb_clean$G, 1)
-
-cbb_ppg <- cbb_clean %>%
-  select(School, PPG)
-
-cbb_ppg$Percentile <- percent_rank(cbb_ppg$PPG)
+# # Figure out which teams average the most ppg
+# cbb_clean$PPG <- round(cbb_clean$Tm./cbb_clean$G, 1)
+# 
+# cbb_ppg <- cbb_clean %>%
+#   select(School, PPG)
+# 
+# cbb_ppg$Percentile <- percent_rank(cbb_ppg$PPG)
 
 # Create a full per game stat sheet
 cbb_clean$OppPPG <- round(cbb_clean$Opp./cbb_clean$G, 1)
@@ -149,6 +156,7 @@ cbb_clean$`BLK/G` <- round(cbb_clean$BLK/cbb_clean$G, 1)
 cbb_clean$`TOV/G` <- round(cbb_clean$TOV/cbb_clean$G, 1)
 cbb_clean$`PF/G` <- round(cbb_clean$PF/cbb_clean$G, 1)
 
+# Select stats for CBB per game
 cbb_per_game <- cbb_clean %>%
   select(School, SOS, PPG, OppPPG, `FG/G`, `FGA/G`, `FG.`, `3P/G`, `3PA/G`, `X3P.`, `FT/G`,
          `FTA/G`, `FT.`, `ORB/G`, `TRB/G`, `AST/G`, `BLK/G`, `TOV/G`, `PF/G`)
@@ -191,14 +199,20 @@ cbb_per_game <- rename(cbb_per_game, c('Points Per Game' = 'PPG',
 cbb_per_game$ScoringMargin <- cbb_per_game$`Points Per Game` - cbb_per_game$`Opponent Points Per Game`
 cbb_per_game$logo <- paste0(Path, cbb_per_game$School, ".png")
 
+# Get NCAA Tournament Teams
 ncaa <- c("NCAA")
 
 cbb_per_game <- cbb_per_game %>%
   filter(str_sub(School, -4, -1) %in% ncaa)
 
+# Strip NCAA from the end
 cbb_per_game$School <- substr(cbb_per_game$School, 1, nchar(cbb_per_game$School) - 5)
+
+# Add logo to dataframe
 cbb_per_game$logo <- paste0(Path, cbb_per_game$School, ".png")
 
+
+# Add rankings to CBB teams
 cbb_per_game_rank <- cbb_per_game
 cbb_per_game_rank$PPGRank <- rank(-cbb_per_game_rank$`Points Per Game`, ties.method = "first")
 cbb_per_game_rank$PARank <- rank(cbb_per_game_rank$`Opponent Points Per Game`, ties.method = "first")
@@ -252,6 +266,7 @@ ui <- fluidPage(
     )
   )
 
+# Server
 server <- function(input, output, session) {
   
   output$Source <- renderText({
@@ -810,5 +825,5 @@ server <- function(input, output, session) {
         
 
 
-
+# Run application
 shinyApp(ui = ui, server = server)
