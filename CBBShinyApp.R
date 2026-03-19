@@ -41,7 +41,7 @@ cols_to_convert_adv <- c("SRS", "SOS", "Pace", "ORtg", "FTr", "3PAr", "TS%", "TR
 cbb_adv_clean[cols_to_convert_adv] <- lapply(cbb_adv_clean[cols_to_convert_adv], as.numeric)
 
 # Add logo to cbb advanced
-Path <- "C:\\Users\\johna\\Documents\\Sports Models\\College Basketball 2026\\College Basketball Logos\\"
+Path <- "C:\\Users\\johna\\Documents\\Sports Models\\College Basketball 2026\\Tourney Logos\\"
 ncaa <- c("NCAA")
 
 # Get NCAA Tournament Teams
@@ -134,7 +134,7 @@ cbb_clean[cols_to_convert] <- lapply(cbb_clean[cols_to_convert], as.numeric)
 
 
 # # Figure out which teams average the most ppg
-# cbb_clean$PPG <- round(cbb_clean$Tm./cbb_clean$G, 1)
+cbb_clean$PPG <- round(cbb_clean$Tm./cbb_clean$G, 1)
 # 
 # cbb_ppg <- cbb_clean %>%
 #   select(School, PPG)
